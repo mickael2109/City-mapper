@@ -1,34 +1,74 @@
-import L from 'leaflet'
-import { useEffect } from 'react';
-import "leaflet-routing-machine"
-import "leaflet-routing-machine/dist/leaflet-routing-machine.css"
+import L from 'leaflet';
+import { useEffect, useState } from 'react';
+import "leaflet-routing-machine";
+import "leaflet-routing-machine/dist/leaflet-routing-machine.css";
 import { useMap } from 'react-leaflet';
+import axios from 'axios';
 
 const LeafletRoutingMachine = () => {
-    const map = useMap()
+    const map = useMap();
+    const [data, setData] = useState({
+        coordonne: {},
+    });
 
+    let DefaultIcon = L.icon({
+        iconUrl: "/bus.png",
+        iconSize: [30, 30],
+    });
 
     useEffect(() => {
+        var marker1 = L.marker([0, 0], { icon: DefaultIcon }).addTo(map);
+
         L.Routing.control({
             lineOptions: {
                 styles: [
                     {
                         color: 'blue',
                         weight: 4,
-                        opacity: 0.7
-                    }
-                ]
+                        opacity: 0.7,
+                    },
+                ],
             },
-            routerWhileDragging : false,
+            routerWhileDragging: false,
             geocoder: L.Control.Geocoder.nominatim(),
-          })
-          .addTo(map);
-    }, [])
+        })
+            .on("routesfound", function (e) {
+                let coordinatesArray = [];
+
+                e.routes[0].coordinates.forEach((c, i) => {
+                    coordinatesArray.push({ lat: c.lat, log: c.lng });
+
+                    setTimeout(() => {
+                        marker1.setLatLng([c.lat, c.lng]);
+                    }, 100 * i);
+                });
+
+                // Afficher les coordonnées depuis le coordinatesArray
+                coordinatesArray.forEach((coord, index) => {
+                    console.log(`Coordonnée ${index + 1}: Lat ${coord.lat}, Lng ${coord.log}`);
+                });
+                
+                // Stocker les coordonnées dans le localStorage
+                localStorage.setItem("coordinates", JSON.stringify(coordinatesArray));
+
+                // Vous pouvez également envoyer les données au backend pour les enregistrer dans un fichier
+                // axios.post('/api/saveCoordinates', { coordinates: coordinatesArray })
+                //     .then(response => {
+                //         console.log("Coordonnées enregistrées avec succès !");
+                //     })
+                //     .catch(error => {
+                //         console.error("Erreur lors de l'enregistrement des coordonnées :", error);
+                //     });
+            })
+            .addTo(map);
+
+    }, [map, DefaultIcon]);
 
     return null;
 };
 
 export default LeafletRoutingMachine;
+
 
 
 // CODE FINAL
