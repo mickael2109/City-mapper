@@ -1,5 +1,5 @@
 import L from 'leaflet';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import "leaflet-routing-machine";
 import "leaflet-routing-machine/dist/leaflet-routing-machine.css";
 import { useMap } from 'react-leaflet';
@@ -7,9 +7,6 @@ import axios from 'axios';
 
 const LeafletRoutingMachine = () => {
     const map = useMap();
-    const [data, setData] = useState({
-        coordonne: {},
-    });
 
     let DefaultIcon = L.icon({
         iconUrl: "/bus.png",
@@ -36,7 +33,7 @@ const LeafletRoutingMachine = () => {
                 let coordinatesArray = [];
 
                 e.routes[0].coordinates.forEach((c, i) => {
-                    coordinatesArray.push({ lat: c.lat, log: c.lng });
+                    coordinatesArray.push({ latitude: c.lat, longitude: c.lng });
 
                     setTimeout(() => {
                         marker1.setLatLng([c.lat, c.lng]);
@@ -44,21 +41,22 @@ const LeafletRoutingMachine = () => {
                 });
 
                 // Afficher les coordonnées depuis le coordinatesArray
-                coordinatesArray.forEach((coord, index) => {
-                    console.log(`Coordonnée ${index + 1}: Lat ${coord.lat}, Lng ${coord.log}`);
-                });
+                // coordinatesArray.forEach((coord, index) => {
+                //     console.log(`Coordonnée ${index + 1}: Lat ${coord.lat}, Lng ${coord.log}`);
+                // });
                 
                 // Stocker les coordonnées dans le localStorage
-                localStorage.setItem("coordinates", JSON.stringify(coordinatesArray));
+                // localStorage.setItem("coordinates", JSON.stringify(coordinatesArray));
 
                 // Vous pouvez également envoyer les données au backend pour les enregistrer dans un fichier
-                // axios.post('/api/saveCoordinates', { coordinates: coordinatesArray })
-                //     .then(response => {
-                //         console.log("Coordonnées enregistrées avec succès !");
-                //     })
-                //     .catch(error => {
-                //         console.error("Erreur lors de l'enregistrement des coordonnées :", error);
-                //     });
+                axios.post('http://8000/insertCoordonnee', { coordonne: coordinatesArray })
+                    .then(response => {
+                        console.log("data : ", response)
+                        console.log("Coordonnées enregistrées avec succès !");
+                    })
+                    .catch(error => {
+                        console.error("Erreur lors de l'enregistrement des coordonnées :", error);
+                    });
             })
             .addTo(map);
 
