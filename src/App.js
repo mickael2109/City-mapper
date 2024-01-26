@@ -1,8 +1,11 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import PublicRoute from './routes/PublicRoute';
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import './App.css'
+import BusRoute from './routes/BusRoute';
+import AdminRoute from './routes/AdminRoute';
+import Index from './views/Index';
+import TaxiRoute from './routes/TaxiRoute';
 
 function App() {
   
@@ -10,7 +13,10 @@ function App() {
     <BrowserRouter>
       <ToastContainer position='top-center'/>
       <Routes>    
-          <Route path="/*" element={<PublicRoute/>}/>
+          <Route path="/*" element={<Index/>}/>
+          <Route path="/bus/*" element={<BusRoute/>}/>
+          <Route path="/taxi/*" element={<TaxiRoute/>}/>
+          <Route path="/admin/*" element={<AdminRoute/>}/>
       </Routes>  
   </BrowserRouter>
   );
