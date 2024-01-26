@@ -4,17 +4,38 @@ import "leaflet-routing-machine";
 import "leaflet-routing-machine/dist/leaflet-routing-machine.css";
 import { useMap } from 'react-leaflet';
 import axios from 'axios';
+import Swal from 'sweetalert2';
 
 const LeafletRoutingMachine = () => {
     const map = useMap();
 
-    let DefaultIcon = L.icon({
+    let iconBus = L.icon({
         iconUrl: "/bus.png",
         iconSize: [30, 30],
     });
 
+    let myIcon = L.icon({
+        iconUrl: "/myIocalisation.png",
+        iconSize: [30, 30],
+    });
+
     useEffect(() => {
-        var marker1 = L.marker([0, 0], { icon: DefaultIcon }).addTo(map);
+        var marker1 = L.marker([0, 0], { icon: iconBus }).addTo(map);
+
+        if(navigator.geolocation){
+            navigator.geolocation.getCurrentPosition((position) => {
+                const latitude = position.coords.latitude
+                const longitude = position.coords.longitude
+    
+                
+                map.setView([latitude, longitude], 30, {icon: myIcon})
+                L.marker([latitude, longitude], {icon: myIcon}).addTo(map)
+            },(error) => {
+                Swal.fire({ icon: 'error', title: 'Erreur', text: `Erreur de la géolocalisation ${error.message}`, });
+            })
+        }else{
+            Swal.fire({ icon: 'error', title: 'Erreur', text: `La géolocalisation n'est pas prise en charge par ce navigateur`, });
+        }
 
         L.Routing.control({
             lineOptions: {
@@ -44,9 +65,13 @@ const LeafletRoutingMachine = () => {
                 // coordinatesArray.forEach((coord, index) => {
                 //     console.log(`Coordonnée ${index + 1}: Lat ${coord.lat}, Lng ${coord.log}`);
                 // });
+
+
                 
                 // Stocker les coordonnées dans le localStorage
                 // localStorage.setItem("coordinates", JSON.stringify(coordinatesArray));
+
+
 
                 // Vous pouvez également envoyer les données au backend pour les enregistrer dans un fichier
                 axios.post('http://8000/insertCoordonnee', { coordonne: coordinatesArray })
@@ -60,7 +85,7 @@ const LeafletRoutingMachine = () => {
             })
             .addTo(map);
 
-    }, [map, DefaultIcon]);
+    }, [map, iconBus]);
 
     return null;
 };
