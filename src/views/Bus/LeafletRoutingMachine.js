@@ -8,6 +8,7 @@ import Swal from 'sweetalert2';
 
 const LeafletRoutingMachine = () => {
     const map = useMap();
+    
 
     let iconBus = L.icon({
         iconUrl: "/bus.png",
@@ -52,9 +53,14 @@ const LeafletRoutingMachine = () => {
         })
             .on("routesfound", function (e) {
                 let coordinatesArray = [];
+                
 
                 e.routes[0].coordinates.forEach((c, i) => {
-                    coordinatesArray.push({ latitude: c.lat, longitude: c.lng });
+                    if(i===0){
+                        coordinatesArray.push({ latitude: c.lat, longitude: c.lng });
+                    }else if(i=== (e.routes[0].coordinates.length - 1)){
+                        coordinatesArray.push({ latitude: c.lat, longitude: c.lng });
+                    }
 
                     setTimeout(() => {
                         marker1.setLatLng([c.lat, c.lng]);
@@ -62,9 +68,9 @@ const LeafletRoutingMachine = () => {
                 });
 
                 // Afficher les coordonnées depuis le coordinatesArray
-                // coordinatesArray.forEach((coord, index) => {
-                //     console.log(`Coordonnée ${index + 1}: Lat ${coord.lat}, Lng ${coord.log}`);
-                // });
+                coordinatesArray.forEach((coord, index) => {
+                    console.log(`Coordonnée ${index + 1}: Lat ${coord.latitude}, Lng ${coord.longitude}`);
+                });
 
 
                 
@@ -74,7 +80,7 @@ const LeafletRoutingMachine = () => {
 
 
                 // Vous pouvez également envoyer les données au backend pour les enregistrer dans un fichier
-                axios.post('http://localhost:8000/insertCoordonnee', { coordonne: coordinatesArray })
+                axios.post('http://localhost:8000/rechercheBus/', { coordonne: coordinatesArray })
                     .then(response => {
                         console.log("data : ", response)
                         console.log("Coordonnées enregistrées avec succès !");
