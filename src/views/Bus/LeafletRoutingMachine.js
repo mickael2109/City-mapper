@@ -32,7 +32,7 @@ const LeafletRoutingMachine = () => {
                 map.setView([latitude, longitude], 30, {icon: myIcon})
                 L.marker([latitude, longitude], {icon: myIcon}).addTo(map)
             },(error) => {
-                Swal.fire({ icon: 'error', title: 'Erreur', text: `Erreur de la géolocalisation ${error.message}`, });
+                Swal.fire({ icon: 'error', title: 'Erreur', text: `Erreur de la géolocalisation, veuillez vérifier votre connexion!`, });
             })
         }else{
             Swal.fire({ icon: 'error', title: 'Erreur', text: `La géolocalisation n'est pas prise en charge par ce navigateur`, });
@@ -56,11 +56,25 @@ const LeafletRoutingMachine = () => {
                 
 
                 e.routes[0].coordinates.forEach((c, i) => {
-                    if(i===0){
+                    if (i === 0) {
                         coordinatesArray.push({ latitude: c.lat, longitude: c.lng });
-                    }else if(i=== (e.routes[0].coordinates.length - 1)){
-                        coordinatesArray.push({ latitude: c.lat, longitude: c.lng });
+                    } else {
+                        // Vérifier si les coordonnées existent déjà dans coordinatesArray
+                        const coordExist = coordinatesArray.some(coord => coord.latitude === c.lat && coord.longitude === c.lng);
+                
+                        if (coordExist) {
+                            console.log("mitovy");
+                        } else {
+                            console.log("tsy mitovy");
+                            coordinatesArray.push({ latitude: c.lat, longitude: c.lng });
+                        }
                     }
+                    // coordinatesArray.push({ latitude: c.lat, longitude: c.lng });
+                    // if(i===0){
+                    //     coordinatesArray.push({ latitude: c.lat, longitude: c.lng });
+                    // }else if(i=== (e.routes[0].coordinates.length - 1)){
+                    //     coordinatesArray.push({ latitude: c.lat, longitude: c.lng });
+                    // }
 
                     setTimeout(() => {
                         marker1.setLatLng([c.lat, c.lng]);
@@ -69,7 +83,7 @@ const LeafletRoutingMachine = () => {
 
                 // Afficher les coordonnées depuis le coordinatesArray
                 coordinatesArray.forEach((coord, index) => {
-                    console.log(`Coordonnée ${index + 1}: Lat ${coord.latitude}, Lng ${coord.longitude}`);
+                    console.log(`Coordonnées ${index + 1}: Lat ${coord.latitude}, Lng ${coord.longitude}`);
                 });
 
 
