@@ -1,5 +1,34 @@
 @import url("~leaflet/dist/leaflet.css");
-.leaflet-container{
-  width: 100%;
-  height: 100vh; 
+.App{
+  display: flex;
+  justify-content: space-between;
 }
+  .App .left-container{
+    width: 50%;
+    height: 100vh;
+  }
+.leaflet-container{
+  width: 50%;
+  height: 100vh;
+}
+
+.leaflet-container .leaflet-routing-container{
+  display: none;
+}
+
+/* BUS */
+.form-bus{
+  width: 100%;
+  height: auto;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+  .form-bus .content-bus{
+    margin: 20px;
+    width: 400px;
+  }
+    .content-bus button{
+      margin: 10px;
+    }
