@@ -11,6 +11,7 @@ const LeafletRoutingMachine = (props) => {
     const map = useMap();
 
     useEffect(() => {
+
         const control = L.Routing.control({
             lineOptions: {
                 styles: [

@@ -4,6 +4,7 @@ import { MapContainer, TileLayer } from 'react-leaflet';
 import L from 'leaflet';
 import LeafletRoutingMachine from '../Bus/LeafletRoutingMachine';
 import Swal from 'sweetalert2';
+import axios from 'axios';
 
 const IndexBus = () => {
     const position = [-18.8792, 47.5079];
@@ -26,15 +27,16 @@ const IndexBus = () => {
         if (!depart || !arrive) {
             Swal.fire({ icon: 'error', title: 'Erreur', text: 'Veuillez compléter les champs!', });
         } else {
-            // Mettez à jour les coordonnées de départ et d'arrivée ici
-            setCoordonneDepart({
-                latDepart: -18.91146318288575,
-                lngDepart: 47.52834969303447,
-            });
-            setCoordonneArrive({
-                latArrive: -18.913889596767543,
-                lngArrive: 47.537546514307095,
-            });
+            try {
+                // Envoyer les données au backend Django
+                const response = await axios.post('http://localhost:8000/rechercheBus/', { depart: depart, arrive: arrive });
+
+                // Traiter la réponse du backend si nécessaire
+                console.log(response.data);
+
+            } catch (error) {
+                console.error('Erreur:', error);
+            }
         }
     };
 
